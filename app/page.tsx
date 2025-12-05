@@ -1,65 +1,160 @@
-import Image from "next/image";
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+import Header from '@/components/Header'
+import MobileMenu from '@/components/MobileMenu'
+import Hero from '@/components/Hero'
+import About from '@/components/About'
+import Portfolio from '@/components/Portfolio'
+import Contact from '@/components/Contact'
+import AvatarModal from '@/components/AvatarModal'
+import { Locale, locales } from '@/lib/constants'
+import { fetchSiteContent, fetchProjects, fetchContacts, transformData } from '@/lib/api'
+const AVATAR_SRC = 'https://placehold.co/400x400/1a1a1a/ffffff?text=DP'
+
+const GITHUB_URL = 'https://github.com/dwiprst13'
+const GITHUB_REPOS_URL = 'https://github.com/dwiprst13?tab=repositories'
+
+const maskEmail = (email: string) => {
+  const [username, domain] = email.split('@')
+  if (!username || !domain || username.length <= 4) return email
+  const visible = `${username.slice(0, 3)}…${username.slice(-1)}`
+  return `${visible}@${domain}`
+}
 
 export default function Home() {
+  const [locale, setLocale] = useState<Locale>(() => {
+    if (typeof window === 'undefined') return 'id'
+    return (localStorage.getItem('preferred-locale') as Locale) || 'id'
+  })
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false)
+
+  const [data, setData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('preferred-locale', locale)
+    }
+  }, [locale])
+
+  useEffect(() => {
+    const loadData = async () => {
+      const [siteContent, projects, contacts] = await Promise.all([
+        fetchSiteContent(),
+        fetchProjects(),
+        fetchContacts(),
+      ])
+
+      if (siteContent && projects && contacts) {
+        setData({ siteContent, projects, contacts })
+      }
+      setLoading(false)
+    }
+    loadData()
+  }, [])
+
+  const transformedData = useMemo(() => {
+    if (!data) return null
+    return transformData(data.siteContent, data.projects, data.contacts, locale)
+  }, [data, locale])
+
+  const handleLocaleChange = (code: Locale) => {
+    setLocale(code)
+  }
+
+  if (loading || !transformedData) {
+    return <div className="min-h-screen bg-neutral-950 flex items-center justify-center text-white">Loading...</div>
+  }
+
+  const t = transformedData.translations
+  const navLinks = t.nav || []
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen bg-neutral-950 text-zinc-100 font-sans">
+      <Header
+        brand={t.brand}
+        navLinks={navLinks}
+        githubLabel={t.mobileMenu?.github || 'GitHub'}
+        githubUrl={GITHUB_URL}
+        locales={locales}
+        locale={locale}
+        onLocaleChange={handleLocaleChange}
+      />
+
+      <button
+        type="button"
+        aria-label={t.mobileMenu?.toggleLabel}
+        aria-expanded={mobileMenuOpen}
+        onClick={() => setMobileMenuOpen((prev) => !prev)}
+        className="fixed right-4 top-20 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/80 text-white shadow-2xl backdrop-blur transition hover:border-white/70 md:hidden"
+      >
+        <span className="sr-only">{t.mobileMenu?.toggleLabel}</span>
+        <span className="relative flex h-5 w-6 flex-col items-center justify-center">
+          <span
+            className={`block h-0.5 w-full rounded-full bg-white transition duration-300 ${mobileMenuOpen ? 'translate-y-1 rotate-45' : '-translate-y-1.5'
+              }`}
+          ></span>
+          <span
+            className={`block h-0.5 w-full rounded-full bg-white transition duration-300 ${mobileMenuOpen ? '-translate-y-1 -rotate-45' : 'translate-y-1.5'
+              }`}
+          ></span>
+        </span>
+      </button>
+
+      <MobileMenu
+        open={mobileMenuOpen}
+        navLinks={navLinks}
+        githubLabel={t.mobileMenu?.github || 'GitHub'}
+        githubUrl={GITHUB_URL}
+        menuTitle={t.mobileMenu?.title || 'Menu'}
+        onClose={() => setMobileMenuOpen(false)}
+      />
+
+      <main>
+        {t.hero && (
+          <Hero
+            copy={{ ...t.hero }}
+            onAvatarClick={() => setAvatarModalOpen(true)}
+            avatarSrc={AVATAR_SRC}
+          />
+        )}
+        {t.about && <About copy={t.about} />}
+        {t.portfolio && (
+          <Portfolio
+            copy={t.portfolio}
+            projects={transformedData.projects}
+            locale={locale}
+            dropdownOpen={dropdownOpen}
+            onToggleDropdown={() => setDropdownOpen((prev) => !prev)}
+            reposUrl={GITHUB_REPOS_URL}
+          />
+        )}
+        {t.contact && (
+          <Contact
+            copy={t.contact}
+            contacts={transformedData.contacts}
+            locale={locale}
+            maskEmail={maskEmail}
+          />
+        )}
       </main>
+
+      <AvatarModal
+        open={avatarModalOpen}
+        label={t.avatarModalLabel || 'Avatar'}
+        avatarSrc={AVATAR_SRC}
+        onClose={() => setAvatarModalOpen(false)}
+      />
+
+      <footer className="border-t border-white/5 bg-black/60">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-8 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} Dwi Prasetia — Tailwind crafted.</p>
+          <p className="uppercase tracking-[0.4em]">{t.footer?.tagline}</p>
+        </div>
+      </footer>
     </div>
-  );
+  )
 }
