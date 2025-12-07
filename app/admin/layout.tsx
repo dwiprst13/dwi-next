@@ -48,6 +48,7 @@ export default function AdminLayout({
         { href: '/admin', label: 'Dashboard' },
         { href: '/admin/content', label: 'Content' },
         { href: '/admin/projects', label: 'Projects' },
+        { href: '/admin/certificates', label: 'Certificates' },
         { href: '/admin/contacts', label: 'Contacts' },
     ]
 

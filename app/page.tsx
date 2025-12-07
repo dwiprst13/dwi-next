@@ -6,10 +6,11 @@ import MobileMenu from '@/components/MobileMenu'
 import Hero from '@/components/Hero'
 import About from '@/components/About'
 import Portfolio from '@/components/Portfolio'
+import Certificates from '@/components/Certificates'
 import Contact from '@/components/Contact'
 import AvatarModal from '@/components/AvatarModal'
 import { Locale, locales } from '@/lib/constants'
-import { fetchSiteContent, fetchProjects, fetchContacts, transformData } from '@/lib/api'
+import { fetchSiteContent, fetchProjects, fetchContacts, fetchCertificates, transformData } from '@/lib/api'
 import avatarIcon from '@/public/avatar.png'
 const AVATAR_SRC = avatarIcon
 
@@ -43,14 +44,15 @@ export default function Home() {
 
   useEffect(() => {
     const loadData = async () => {
-      const [siteContent, projects, contacts] = await Promise.all([
+      const [siteContent, projects, contacts, certificates] = await Promise.all([
         fetchSiteContent(),
         fetchProjects(),
         fetchContacts(),
+        fetchCertificates(),
       ])
 
-      if (siteContent && projects && contacts) {
-        setData({ siteContent, projects, contacts })
+      if (siteContent && projects && contacts && certificates) {
+        setData({ siteContent, projects, contacts, certificates })
       }
       setLoading(false)
     }
@@ -59,7 +61,7 @@ export default function Home() {
 
   const transformedData = useMemo(() => {
     if (!data) return null
-    return transformData(data.siteContent, data.projects, data.contacts, locale)
+    return transformData(data.siteContent, data.projects, data.contacts, data.certificates, locale)
   }, [data, locale])
 
   const handleLocaleChange = (code: Locale) => {
@@ -132,6 +134,9 @@ export default function Home() {
             onToggleDropdown={() => setDropdownOpen((prev) => !prev)}
             reposUrl={GITHUB_REPOS_URL}
           />
+        )}
+        {transformedData.certificates && (
+          <Certificates certificates={transformedData.certificates} />
         )}
         {t.contact && (
           <Contact

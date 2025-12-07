@@ -20,6 +20,7 @@ create table public.projects (
   year text not null,
   stack text[] not null,
   repo_url text not null,
+  image_url text,
   is_featured boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
@@ -37,6 +38,32 @@ create table public.project_translations (
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
   primary key (id),
   unique (project_id, locale)
+);
+
+-- Certificates Table
+create table public.certificates (
+  id uuid not null default uuid_generate_v4(),
+  organization text not null,
+  issued_date date not null,
+  image_url text,
+  credential_url text,
+  display_order integer default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  primary key (id)
+);
+
+-- Certificate Translations Table
+create table public.certificate_translations (
+  id uuid not null default uuid_generate_v4(),
+  certificate_id uuid not null references public.certificates(id) on delete cascade,
+  locale text not null,
+  title text not null,
+  learnings text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  primary key (id),
+  unique (certificate_id, locale)
 );
 
 -- Contacts Table
@@ -97,3 +124,18 @@ create policy "Allow authenticated delete on contacts" on public.contacts for de
 create policy "Allow authenticated insert on contact_translations" on public.contact_translations for insert to authenticated with check (true);
 create policy "Allow authenticated update on contact_translations" on public.contact_translations for update to authenticated using (true);
 create policy "Allow authenticated delete on contact_translations" on public.contact_translations for delete to authenticated using (true);
+
+-- Certificates RLS
+alter table public.certificates enable row level security;
+alter table public.certificate_translations enable row level security;
+
+create policy "Allow public read access on certificates" on public.certificates for select using (true);
+create policy "Allow public read access on certificate_translations" on public.certificate_translations for select using (true);
+
+create policy "Allow authenticated insert on certificates" on public.certificates for insert to authenticated with check (true);
+create policy "Allow authenticated update on certificates" on public.certificates for update to authenticated using (true);
+create policy "Allow authenticated delete on certificates" on public.certificates for delete to authenticated using (true);
+
+create policy "Allow authenticated insert on certificate_translations" on public.certificate_translations for insert to authenticated with check (true);
+create policy "Allow authenticated update on certificate_translations" on public.certificate_translations for update to authenticated using (true);
+create policy "Allow authenticated delete on certificate_translations" on public.certificate_translations for delete to authenticated using (true);

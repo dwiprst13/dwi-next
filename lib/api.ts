@@ -33,6 +33,20 @@ export type Contact = {
     }[]
 }
 
+export type Certificate = {
+    id: string
+    organization: string
+    issued_date: string
+    image_url?: string
+    credential_url?: string
+    display_order: number
+    translations: {
+        locale: string
+        title: string
+        learnings: string
+    }[]
+}
+
 export async function fetchSiteContent() {
     const supabase = createClient()
     const { data } = await supabase.from('site_content').select('*')
@@ -63,11 +77,25 @@ export async function fetchContacts() {
     return data as Contact[]
 }
 
+export async function fetchCertificates() {
+    const supabase = createClient()
+    const { data } = await supabase
+        .from('certificates')
+        .select(`
+      *,
+      translations:certificate_translations(*)
+    `)
+        .order('display_order')
+        .order('issued_date', { ascending: false })
+    return data as Certificate[]
+}
+
 // Helper to transform DB data to the shape expected by components
 export function transformData(
     siteContent: SiteContent[],
     projects: Project[],
     contacts: Contact[],
+    certificates: Certificate[],
     locale: Locale
 ) {
     // Transform Site Content
@@ -96,10 +124,25 @@ export function transformData(
         label: c.translations.find((t) => t.locale === locale)?.label || c.key,
     }))
 
+    // Transform Certificates
+    const transformedCertificates = certificates.map((c) => {
+        const t = c.translations.find((tr) => tr.locale === locale)
+        return {
+            id: c.id,
+            organization: c.organization,
+            issuedDate: c.issued_date,
+            imageUrl: c.image_url,
+            credentialUrl: c.credential_url,
+            title: t?.title || c.organization,
+            learnings: t?.learnings || '',
+        }
+    })
+
     return {
         translations,
         projects: transformedProjects,
         contacts: transformedContacts,
+        certificates: transformedCertificates,
     }
 }
 
