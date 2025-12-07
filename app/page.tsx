@@ -136,7 +136,13 @@ export default function Home() {
           />
         )}
         {transformedData.certificates && (
-          <Certificates certificates={transformedData.certificates} />
+          <Certificates
+            copy={t.certificates || {
+              eyebrow: 'Credentials',
+              heading: 'Certificates'
+            }}
+            certificates={transformedData.certificates}
+          />
         )}
         {t.contact && (
           <Contact
