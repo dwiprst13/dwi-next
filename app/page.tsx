@@ -10,7 +10,8 @@ import Contact from '@/components/Contact'
 import AvatarModal from '@/components/AvatarModal'
 import { Locale, locales } from '@/lib/constants'
 import { fetchSiteContent, fetchProjects, fetchContacts, transformData } from '@/lib/api'
-const AVATAR_SRC = 'https://placehold.co/400x400/1a1a1a/ffffff?text=DP'
+import avatarIcon from '@/public/avatar.png'
+const AVATAR_SRC = avatarIcon
 
 const GITHUB_URL = 'https://github.com/dwiprst13'
 const GITHUB_REPOS_URL = 'https://github.com/dwiprst13?tab=repositories'

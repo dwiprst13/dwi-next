@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Dwi Prasetia",
   description: "Personal website of Dwi Prasetia",
+  icons: {
+    icon: "/avatar.png",
+    shortcut: "/avatar.png",
+    apple: "/avatar.png",
+  },
 };
 
 export default function RootLayout({
