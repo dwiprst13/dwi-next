@@ -32,7 +32,7 @@ export default function ProjectCard({
                 <span className="absolute inset-y-0 -left-1/2 h-full w-[200%] bg-linear-to-r from-transparent via-white/20 to-transparent blur-2xl animate-shimmer"></span>
             </span>
             <div className="relative">
-                <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex flex-col justify-between gap-4">
                     <h3 className="font-display text-xl font-semibold text-white group-hover:text-zinc-200">
                         {title}
                     </h3>
