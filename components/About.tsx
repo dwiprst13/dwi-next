@@ -36,7 +36,7 @@ export default function About({ copy }: AboutProps) {
                     {copy.skills.map((skill) => (
                         <div
                             key={skill}
-                            className="rounded-3xl border border-white/10 bg-white/5 px-6 py-4 text-sm font-medium uppercase tracking-[0.3em] text-zinc-300 hover:bg-white/10 transition hover:pl-8"
+                            className="rounded-3xl border border-white/10 bg-white/10 px-6 py-4 text-sm font-medium uppercase tracking-[0.3em] text-zinc-300 hover:bg-white/10 transition hover:pl-8"
                         >
                             {skill}
                         </div>

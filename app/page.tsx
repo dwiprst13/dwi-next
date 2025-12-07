@@ -73,7 +73,7 @@ export default function Home() {
   const navLinks = t.nav || []
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-zinc-100 font-sans">
+    <div className="min-h-screen text-zinc-100 font-sans">
       <Header
         brand={t.brand}
         navLinks={navLinks}

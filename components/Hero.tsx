@@ -33,7 +33,7 @@ export default function Hero({ copy, onAvatarClick, avatarSrc }: HeroProps) {
         >
             <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -right-12 top-0 hidden h-64 w-64 rounded-full bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-70 blur-[120px] md:block animate-float"
+                className="pointer-events-none absolute -right-12 top-0 hidden h-64 w-64 rounded-full opacity-70 blur-[120px] md:block animate-float"
             ></span>
             <span
                 aria-hidden="true"
@@ -59,7 +59,7 @@ export default function Hero({ copy, onAvatarClick, avatarSrc }: HeroProps) {
                     {copy.stats.map((stat) => (
                         <div
                             key={stat.label}
-                            className="rounded-3xl border border-white/10 bg-white/5 p-5"
+                            className="rounded-3xl border border-white/10 bg-white/10 p-5"
                         >
                             <p className="text-xs uppercase tracking-[0.4em] text-zinc-500">
                                 {stat.label}
@@ -71,7 +71,7 @@ export default function Hero({ copy, onAvatarClick, avatarSrc }: HeroProps) {
                     ))}
                 </div>
             </div>
-            <div className="w-full max-w-sm rounded-[32px] border border-white/10 bg-white/10 p-8 text-right">
+            <div className="w-full max-w-sm rounded-4xl border border-white/10 bg-white/10 p-8 text-right">
                 <p className="text-sm uppercase tracking-[0.4em] text-zinc-500">
                     {copy.availability.heading}
                 </p>
@@ -85,7 +85,7 @@ export default function Hero({ copy, onAvatarClick, avatarSrc }: HeroProps) {
                     <button
                         type="button"
                         onClick={onAvatarClick}
-                        className="h-12 w-12 overflow-hidden rounded-full border border-white/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white relative"
+                        className="h-12 w-12 overflow-hidden rounded-full border border-white/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white relative"
                         aria-label={copy.avatarButtonLabel}
                     >
                         {typeof avatarSrc === 'string' ? (

@@ -25,11 +25,11 @@ export default function ProjectCard({
             href={project.repoUrl}
             target="_blank"
             rel="noreferrer"
-            className={`group relative block overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur transition hover:-translate-y-1 hover:border-white/40 hover:bg-white/10 ${compact ? 'sm:p-5' : 'sm:p-7'
+            className={`group relative block overflow-hidden rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur transition hover:-translate-y-1 hover:border-white/40 hover:bg-white/10 ${compact ? 'sm:p-5' : 'sm:p-7'
                 }`}
         >
             <span className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-70">
-                <span className="absolute inset-y-0 -left-1/2 h-full w-[200%] bg-gradient-to-r from-transparent via-white/20 to-transparent blur-2xl animate-shimmer"></span>
+                <span className="absolute inset-y-0 -left-1/2 h-full w-[200%] bg-linear-to-r from-transparent via-white/20 to-transparent blur-2xl animate-shimmer"></span>
             </span>
             <div className="relative">
                 <div className="flex flex-wrap items-center justify-between gap-4">

@@ -41,7 +41,7 @@ export default function Portfolio({
         >
             <span
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 top-16 -z-10 h-32 rounded-full bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-80 blur-3xl"
+                className="pointer-events-none absolute inset-x-0 top-16 -z-10 h-32 rounded-full bg-linear-to-r from-transparent via-white/5 to-transparent opacity-80 blur-3xl"
             ></span>
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div>
