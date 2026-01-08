@@ -84,6 +84,7 @@ export default function Home() {
         githubUrl={GITHUB_URL}
         locales={locales}
         locale={locale}
+        activeSection=''
         onLocaleChange={handleLocaleChange}
       />
 
