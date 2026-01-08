@@ -9,6 +9,7 @@ interface HeaderProps {
     locales: { code: Locale; label: string }[]
     locale: Locale
     onLocaleChange: (code: Locale) => void
+    activeSection: string
 }
 
 export default function Header({
@@ -19,6 +20,7 @@ export default function Header({
     locales,
     locale,
     onLocaleChange,
+    activeSection,
 }: HeaderProps) {
     return (
         <header className="sticky top-0 z-50 border-b border-white/5 bg-black/50 backdrop-blur">
@@ -27,15 +29,18 @@ export default function Header({
                     {brand}
                 </p>
                 <nav className="hidden gap-6 text-sm font-medium uppercase tracking-[0.3em] text-zinc-400 md:flex">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className="transition hover:text-white"
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
+                    {navLinks.map((link) => {
+                        const isActive = link.href === `#${activeSection}`
+                        return (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className={`transition hover:text-white ${isActive ? 'text-white' : ''}`}
+                            >
+                                {link.label}
+                            </Link>
+                        )
+                    })}
                 </nav>
                 <div className="flex items-center gap-3">
                     <div className="rounded-full border border-white/20 px-1 py-0.5 text-xs font-semibold text-white/70">
