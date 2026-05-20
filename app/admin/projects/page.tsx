@@ -13,8 +13,6 @@ import {
     Pencil,
     Trash2,
     ArrowLeft,
-    Upload,
-    Image as ImageIcon,
     Search,
 } from 'lucide-react'
 
@@ -24,7 +22,7 @@ type Project = {
     year: string
     stack: string[]
     repo_url: string
-    image_url?: string
+    // image_url?: string // disabled: column not yet in DB
     is_featured: boolean
     translations: {
         locale: string
@@ -38,7 +36,6 @@ const EMPTY_PROJECT: Omit<Project, 'id'> = {
     year: new Date().getFullYear().toString(),
     stack: [],
     repo_url: '',
-    image_url: '',
     is_featured: false,
     translations: [
         { locale: 'id', title: '', description: '' },
@@ -51,7 +48,6 @@ export default function ProjectsPage() {
     const [loading, setLoading] = useState(true)
     const [isEditing, setIsEditing] = useState(false)
     const [currentProject, setCurrentProject] = useState<Partial<Project>>(EMPTY_PROJECT)
-    const [uploading, setUploading] = useState(false)
     const [saving, setSaving] = useState(false)
     const [search, setSearch] = useState('')
     const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
@@ -93,31 +89,6 @@ export default function ProjectsPage() {
     const handleCreate = () => {
         setCurrentProject(EMPTY_PROJECT)
         setIsEditing(true)
-    }
-
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        try {
-            setUploading(true)
-            if (!e.target.files || e.target.files.length === 0) return
-
-            const file = e.target.files[0]
-            const fileExt = file.name.split('.').pop()
-            const fileName = `project_${Date.now()}.${fileExt}`
-
-            const { error: uploadError } = await supabase.storage
-                .from('portfolio')
-                .upload(fileName, file)
-
-            if (uploadError) throw uploadError
-
-            const { data } = supabase.storage.from('portfolio').getPublicUrl(fileName)
-            setCurrentProject({ ...currentProject, image_url: data.publicUrl })
-            showToast('Image uploaded', 'success')
-        } catch (error: any) {
-            showToast('Upload failed: ' + error.message, 'error')
-        } finally {
-            setUploading(false)
-        }
     }
 
     const handleSave = async (e: React.FormEvent) => {
@@ -296,40 +267,6 @@ export default function ProjectsPage() {
                         </div>
                     </div>
 
-                    {/* Image */}
-                    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
-                        <h3 className="mb-4 text-sm font-semibold uppercase tracking-widest text-zinc-500">
-                            Project Image
-                        </h3>
-                        <div className="flex items-start gap-4">
-                            {currentProject.image_url ? (
-                                <img
-                                    src={currentProject.image_url}
-                                    alt="Preview"
-                                    className="h-24 w-24 rounded-xl border border-white/10 object-cover"
-                                />
-                            ) : (
-                                <div className="flex h-24 w-24 items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/[0.02]">
-                                    <ImageIcon className="h-8 w-8 text-zinc-700" />
-                                </div>
-                            )}
-                            <div className="flex-1">
-                                <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-zinc-300 transition hover:bg-white/[0.06]">
-                                    <Upload className="h-4 w-4" />
-                                    {uploading ? 'Uploading...' : 'Upload Image'}
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageUpload}
-                                        disabled={uploading}
-                                        className="hidden"
-                                    />
-                                </label>
-                                <p className="mt-2 text-xs text-zinc-600">PNG, JPG up to 5MB</p>
-                            </div>
-                        </div>
-                    </div>
-
                     {/* Translations */}
                     <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
                         <h3 className="mb-4 text-sm font-semibold uppercase tracking-widest text-zinc-500">
@@ -440,17 +377,9 @@ export default function ProjectsPage() {
                                 className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 transition hover:border-white/10 hover:bg-white/[0.04]"
                             >
                                 <div className="flex items-start gap-4">
-                                    {project.image_url ? (
-                                        <img
-                                            src={project.image_url}
-                                            alt={title}
-                                            className="h-14 w-14 shrink-0 rounded-xl border border-white/10 object-cover"
-                                        />
-                                    ) : (
-                                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white/5">
-                                            <FolderKanban className="h-6 w-6 text-zinc-600" />
-                                        </div>
-                                    )}
+                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white/5">
+                                        <FolderKanban className="h-6 w-6 text-zinc-600" />
+                                    </div>
                                     <div className="min-w-0 flex-1">
                                         <div className="flex items-center gap-2">
                                             <h3 className="truncate text-base font-semibold text-white">
