@@ -218,24 +218,48 @@ export default function ProjectsPage() {
 
                         <div className="mt-5">
                             <label className="mb-1.5 block text-xs font-medium text-zinc-400">
-                                Tech Stack (comma separated)
+                                Tech Stack
                             </label>
-                            <input
-                                type="text"
-                                value={currentProject.stack?.join(', ')}
-                                onChange={e => setCurrentProject({ ...currentProject, stack: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
-                                placeholder="Go, React, PostgreSQL"
-                                className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-sm text-white placeholder-zinc-600 transition focus:border-white/20 focus:outline-none focus:ring-1 focus:ring-white/10"
-                            />
-                            {currentProject.stack && currentProject.stack.length > 0 && (
-                                <div className="mt-2 flex flex-wrap gap-1.5">
-                                    {currentProject.stack.filter(Boolean).map((tech, i) => (
-                                        <span key={i} className="rounded-md bg-white/5 px-2 py-0.5 text-xs text-zinc-400">
-                                            {tech}
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
+                            <div className="flex flex-wrap gap-1.5 min-h-[42px] w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 focus-within:border-white/20 focus-within:ring-1 focus-within:ring-white/10">
+                                {currentProject.stack?.filter(Boolean).map((tech, i) => (
+                                    <span
+                                        key={i}
+                                        className="inline-flex items-center gap-1 rounded-md bg-white/10 px-2 py-0.5 text-xs text-zinc-300"
+                                    >
+                                        {tech}
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const newStack = [...(currentProject.stack || [])]
+                                                newStack.splice(i, 1)
+                                                setCurrentProject({ ...currentProject, stack: newStack })
+                                            }}
+                                            className="ml-0.5 text-zinc-500 hover:text-white"
+                                        >
+                                            ×
+                                        </button>
+                                    </span>
+                                ))}
+                                <input
+                                    type="text"
+                                    placeholder={currentProject.stack?.length ? '' : 'Type and press Enter...'}
+                                    className="flex-1 min-w-[120px] bg-transparent text-sm text-white placeholder-zinc-600 outline-none"
+                                    onKeyDown={e => {
+                                        if (e.key === 'Enter' || e.key === ',') {
+                                            e.preventDefault()
+                                            const val = e.currentTarget.value.trim()
+                                            if (val) {
+                                                setCurrentProject({
+                                                    ...currentProject,
+                                                    stack: [...(currentProject.stack || []), val],
+                                                })
+                                                e.currentTarget.value = ''
+                                            }
+                                        }
+                                    }}
+                                />
+                            </div>
+                            <p className="mt-1.5 text-[0.65rem] text-zinc-600">Press Enter or comma to add</p>
                         </div>
 
                         <div className="mt-5">
