@@ -1,4 +1,6 @@
-import { Locale } from '@/lib/constants'
+'use client'
+
+import { ArrowUpRight } from 'lucide-react'
 
 export interface Project {
     key: string
@@ -18,39 +20,47 @@ export default function ProjectCard({
     project,
     compact = false,
 }: ProjectCardProps) {
-    const { title, description } = project
-
     return (
         <a
             href={project.repoUrl}
             target="_blank"
             rel="noreferrer"
-            className={`group relative block overflow-hidden rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur transition hover:-translate-y-1 hover:border-white/40 hover:bg-white/10 ${compact ? 'sm:p-5' : 'sm:p-7'
-                }`}
+            className={`group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] transition-all duration-300 hover:border-white/15 hover:bg-white/[0.04] hover:-translate-y-0.5 ${
+                compact ? 'p-5' : 'p-6 sm:p-7'
+            }`}
         >
-            <span className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-70">
-                <span className="absolute inset-y-0 -left-1/2 h-full w-[200%] bg-linear-to-r from-transparent via-white/20 to-transparent blur-2xl animate-shimmer"></span>
-            </span>
-            <div className="relative">
-                <div className="flex flex-col justify-between gap-4">
-                    <h3 className="font-display text-xl font-semibold text-white group-hover:text-zinc-200">
-                        {title}
-                    </h3>
-                    <span className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
-                        {project.year}
-                    </span>
+            {/* Hover glow */}
+            <div className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.03] via-transparent to-transparent" />
+            </div>
+
+            <div className="relative flex flex-1 flex-col">
+                {/* Header */}
+                <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                        <h3 className={`font-display font-semibold text-white ${compact ? 'text-lg' : 'text-xl'}`}>
+                            {project.title}
+                        </h3>
+                        <span className="mt-1 inline-block text-[0.65rem] uppercase tracking-[0.3em] text-zinc-600">
+                            {project.year}
+                        </span>
+                    </div>
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.03] text-zinc-500 transition-all group-hover:border-white/20 group-hover:bg-white group-hover:text-black">
+                        <ArrowUpRight className="h-3.5 w-3.5" />
+                    </div>
                 </div>
-                <p
-                    className={`mt-4 text-sm text-zinc-400 ${compact ? 'md:max-w-[32ch]' : 'md:max-w-[40ch]'
-                        }`}
-                >
-                    {description}
+
+                {/* Description */}
+                <p className={`mt-3 text-sm leading-relaxed text-zinc-500 ${compact ? 'line-clamp-2' : 'line-clamp-3'}`}>
+                    {project.description}
                 </p>
-                <div className="mt-6 flex flex-wrap gap-2">
+
+                {/* Stack */}
+                <div className="mt-auto flex flex-wrap gap-1.5 pt-5">
                     {project.stack.map((tech) => (
                         <span
                             key={tech}
-                            className="rounded-full border border-white/20 px-3 py-1 text-xs font-medium uppercase tracking-widest text-zinc-300"
+                            className="rounded-md bg-white/[0.04] px-2 py-0.5 text-[0.6rem] font-medium text-zinc-500 transition group-hover:bg-white/[0.06] group-hover:text-zinc-400"
                         >
                             {tech}
                         </span>

@@ -1,5 +1,8 @@
+'use client'
+
 import Link from 'next/link'
 import { Locale } from '@/lib/constants'
+import { useEffect, useState } from 'react'
 
 interface HeaderProps {
     brand: string
@@ -22,28 +25,48 @@ export default function Header({
     onLocaleChange,
     activeSection,
 }: HeaderProps) {
+    const [scrolled, setScrolled] = useState(false)
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20)
+        window.addEventListener('scroll', handleScroll, { passive: true })
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
+
     return (
-        <header className="sticky top-0 z-50 border-b border-white/5 bg-black/50 backdrop-blur">
-            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-5">
-                <p className="font-display text-lg font-semibold tracking-[0.4em] text-white">
+        <header
+            className={`sticky top-0 z-50 transition-all duration-300 ${
+                scrolled
+                    ? 'border-b border-white/[0.06] bg-black/80 backdrop-blur-xl shadow-lg shadow-black/20'
+                    : 'bg-transparent'
+            }`}
+        >
+            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+                <p className="font-display text-lg font-bold tracking-[0.3em] text-white">
                     {brand}
                 </p>
-                <nav className="hidden gap-6 text-sm font-medium uppercase tracking-[0.3em] text-zinc-400 md:flex">
+
+                <nav className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.03] px-1.5 py-1 md:flex">
                     {navLinks.map((link) => {
                         const isActive = link.href === `#${activeSection}`
                         return (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={`transition hover:text-white ${isActive ? 'text-white' : ''}`}
+                                className={`rounded-full px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] transition-all ${
+                                    isActive
+                                        ? 'bg-white/10 text-white'
+                                        : 'text-zinc-500 hover:text-zinc-200'
+                                }`}
                             >
                                 {link.label}
                             </Link>
                         )
                     })}
                 </nav>
-                <div className="flex items-center gap-3">
-                    <div className="rounded-full border border-white/20 px-1 py-0.5 text-xs font-semibold text-white/70">
+
+                <div className="flex items-center gap-2">
+                    <div className="flex rounded-full border border-white/[0.08] bg-white/[0.03] p-0.5">
                         {locales.map((option) => {
                             const active = option.code === locale
                             return (
@@ -51,10 +74,11 @@ export default function Header({
                                     key={option.code}
                                     type="button"
                                     onClick={() => onLocaleChange(option.code)}
-                                    className={`rounded-full px-3 py-1 transition ${active
-                                        ? 'bg-white text-black'
-                                        : 'text-white/60 hover:text-white'
-                                        }`}
+                                    className={`rounded-full px-3 py-1 text-[0.65rem] font-semibold transition-all ${
+                                        active
+                                            ? 'bg-white text-black shadow-sm'
+                                            : 'text-zinc-500 hover:text-white'
+                                    }`}
                                     aria-pressed={active}
                                 >
                                     {option.label}
@@ -66,7 +90,7 @@ export default function Header({
                         href={githubUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="rounded-full border border-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black"
+                        className="hidden rounded-full border border-white/20 px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-white transition-all hover:border-white hover:bg-white hover:text-black sm:inline-flex"
                     >
                         {githubLabel}
                     </a>
